@@ -13,8 +13,6 @@ from sklearn.preprocessing import OneHotEncoder,StandardScaler
 
 from src.exception import CustomException
 from src.logger import logging
-import os
-
 from src.utils import save_object
 
 
@@ -29,12 +27,12 @@ class DataTransformation:
 
     def get_data_transformer_object(self):
         try:
-            numerical_columns = ["writing score", "reading score"]
+            numerical_columns = ["writing_score", "reading_score"]
             categorical_columns = ["gender", 
                                    "race/ethnicity", 
-                                   "parental level of education",
+                                   "parental_level_of_education",
                                      "lunch", 
-                                     "test preparation course"]
+                                     "test_preparation_course"]
             
             num_pipeline = Pipeline(steps=[
                 ('imputer', SimpleImputer(strategy="median")),
@@ -60,7 +58,7 @@ class DataTransformation:
             return preprocessor
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise CustomException(e, sys)
         
 
 
@@ -75,7 +73,7 @@ class DataTransformation:
             logging.info("Obtaining preprocessor object")
             preprocessor_obj = self.get_data_transformer_object()
 
-            target_column_name = "math score"
+            target_column_name = "math_score"
             numerical_columns = ["writing score", "reading score"]
 
             input_feature_train_df= train_df.drop(columns=[target_column_name], axis=1)
@@ -87,7 +85,7 @@ class DataTransformation:
             logging.info("Applying preprocessing object on training and testing datasets")
             
             input_feature_train_arr=preprocessor_obj.fit_transform(input_feature_train_df)
-            input_feature_test_arr=preprocessor_obj.transform(input_feature_train_df)
+            input_feature_test_arr=preprocessor_obj.transform(input_feature_test_df)
             train_arr = np.c_[input_feature_train_arr, np.array(target_feature_train_df)]
             test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
 
@@ -109,4 +107,4 @@ class DataTransformation:
 
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise CustomException(e, sys) 
